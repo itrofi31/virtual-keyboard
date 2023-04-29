@@ -46,6 +46,7 @@ body {
   width: 6%;
   max-width: 6rem;
   margin: 0.3rem;
+  padding: 1.5rem;
   border-radius: 0.4rem;
   border: none;
   /* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1); */
@@ -61,6 +62,10 @@ body {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
+.keyboard__key__active {
+  background-color: #fffaf5;
+}
+
 .keyboard__key--medium {
   width: 9%;
   max-width: 9rem;
@@ -74,4 +79,12 @@ body {
 .keyboard__key--extra-wide {
   width: 36%;
   max-width: 36rem;
+}
+
+.keyboard__key--margin-left {
+  margin-left: 10.5rem;
+}
+
+.hidden {
+  display: none;
 }

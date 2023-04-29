@@ -1,0 +1,14 @@
+{
+  "name": "virtual-keyboard",
+  "version": "1.0.0",
+  "description": "rss task virtual keyboard",
+  "main": "keyboard.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ivan Trofimov",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.39.0"
+  }
+}
