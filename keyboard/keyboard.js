@@ -29,7 +29,6 @@ const Keyboard = {
     this.elements.textArea.classList.add('textarea');
     this.elements.keysContainer.classList.add('keyboard__keys', 'hidden');
     this.elements.keysContainer.appendChild(this._createKeys()); // append fragment
-
     //fill keys array
     this.elements.keys =
       this.elements.keysContainer.querySelectorAll('.keyboard__key');
@@ -46,6 +45,8 @@ const Keyboard = {
         this.elements.textArea.value = currentValue;
       });
     });
+
+    this.showPressedKeys();
   },
 
   _createKeys() {
@@ -54,17 +55,18 @@ const Keyboard = {
     const keyLayout = [
       '`','1','2','3','4','5','6','7','8','9','0','-','=','del',
       'tab','q','w','e','r','t','y','u','i','o','p','[',']','\\',
-      'caps lock','a','s','d','f','g','h','j','k','l',';',"'",'return',
-      'shift','z','x','c','v','b','n','m',',','.','/','^','shift-r',
+      'caps lock','a','s','d','f','g','h','j','k','l',';',"'",'ent',
+      'shif','z','x','c','v','b','n','m',',','.','/','^','shif-r',
       'fn','ctrl','opt','cmd','space','cmd','opt','<','v','>'];
 
     keyLayout.forEach((key) => {
       const keyElement = document.createElement('button');
-      const insertLineBreak = ['del', '\\', 'return', 'shift-r'].includes(key);
+      const insertLineBreak = ['del', '\\', 'ent', 'shif-r'].includes(key);
 
       //Add classes/attributes
       keyElement.setAttribute('type', 'button');
       keyElement.classList.add('keyboard__key');
+      keyElement.dataset.value = key;
 
       switch (key) {
         case 'del':
@@ -72,11 +74,8 @@ const Keyboard = {
           keyElement.textContent = key;
 
           keyElement.addEventListener('click', function () {
-            this.properties.value = this.properties.value.substring(
-              0,
-              this.properties.value.length - 1
-            );
-            this._triggerEvent('oninput');
+            Keyboard.deleteChar();
+            Keyboard._triggerEvent('oninput');
           });
           break;
 
@@ -99,33 +98,33 @@ const Keyboard = {
           });
           break;
 
-        case 'return':
+        case 'ent':
           keyElement.classList.add('keyboard__key--wide');
-          keyElement.textContent = 'return';
+          keyElement.textContent = 'enter';
 
           keyElement.addEventListener('click', function () {
             Keyboard.properties.value += '\n';
 
-            Keyboard.elements.textArea.value.substring(
-              0,
-              Keyboard.elements.textArea.selectionStart
-            ) +
-              '\n' +
-              Keyboard.elements.textArea.value.substring(
-                Keyboard.elements.textArea.selectionEnd,
-                Keyboard.elements.textArea.value.length
-              );
+            // Keyboard.elements.textArea.value.substring(
+            //   0,
+            //   Keyboard.elements.textArea.selectionStart
+            // ) +
+            //   '\n' +
+            //   Keyboard.elements.textArea.value.substring(
+            //     Keyboard.elements.textArea.selectionEnd,
+            //     Keyboard.elements.textArea.value.length
+            //   );
             Keyboard._triggerEvent('oninput');
           });
           break;
 
-        case 'shift':
+        case 'shif':
           keyElement.classList.add('keyboard__key--medium');
-          keyElement.textContent = key;
+          keyElement.textContent = 'shift';
 
           break;
 
-        case 'shift-r':
+        case 'shif-r':
           keyElement.classList.add('keyboard__key--medium');
           keyElement.textContent = 'shift';
 
@@ -151,14 +150,12 @@ const Keyboard = {
           keyElement.textContent = key.toLowerCase();
 
           keyElement.addEventListener('click', function () {
-            // const checkCapsLock = function () {
-            //   Keyboard.properties.capsLock
-            //     ? key.toUpperCase()
-            //     : key.toLowerCase();
-            // };
-            Keyboard.properties.value += Keyboard.properties.capsLock
-              ? key.toUpperCase()
-              : key.toLowerCase();
+            console.log(keyElement.textContent);
+            keyElement.textContent.length === 1
+              ? (Keyboard.properties.value += Keyboard.properties.capsLock
+                  ? key.toUpperCase()
+                  : key.toLowerCase())
+              : keyElement;
             Keyboard._triggerEvent('oninput');
           });
           break;
@@ -195,6 +192,62 @@ const Keyboard = {
   open(initialValue, oninput) {
     this.properties.value = initialValue || '';
     this.eventHandlers.oninput = oninput;
+  },
+
+  deleteChar() {
+    Keyboard.properties.value = Keyboard.properties.value.substring(
+      0,
+      Keyboard.properties.value.length - 1
+    );
+  },
+  showPressedKeys() {
+    document.addEventListener('keydown', (e) => {
+      console.log(e.key);
+      if (
+        document.querySelector(
+          `.keyboard__key[data-value='${e.key.toLowerCase()}']`
+        )
+      ) {
+        Keyboard.properties.value += e.key;
+        console.log(Keyboard.properties.value);
+      }
+
+      document
+        .querySelector(`.keyboard__key[data-value='${e.key.toLowerCase()}']`)
+        ?.classList.add('active');
+
+      switch (e.key) {
+        case 'CapsLock':
+          document
+            .querySelector(`.keyboard__key[data-value='caps lock']`)
+            .classList.add('keyboard__key__active');
+
+          Keyboard._toggleCapsLock();
+          break;
+        case 'Backspace':
+          Keyboard.deleteChar();
+          break;
+        case 'Enter':
+          Keyboard.properties.value += '\n';
+          break;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      document
+        .querySelector(`.keyboard__key[data-value='${e.key.toLowerCase()}']`)
+        ?.classList.remove('active');
+      switch (e.key) {
+        case 'CapsLock':
+          document
+            .querySelector(`.keyboard__key[data-value='caps lock']`)
+            .classList.remove('keyboard__key__active');
+
+          Keyboard._toggleCapsLock();
+
+          break;
+      }
+    });
   },
 };
 

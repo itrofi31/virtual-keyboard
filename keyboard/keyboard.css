@@ -31,7 +31,7 @@ body {
 .textarea {
   display: block;
   width: 75%;
-  height: 4.5rem;
+  min-height: 9rem;
   border: 0.1rem solid #ffc078;
   border-radius: 0.9rem;
 }
@@ -59,6 +59,10 @@ body {
 }
 
 .keyboard__key:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.active {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
