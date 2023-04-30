@@ -59,13 +59,13 @@ const Keyboard = {
     const keyLayout = [
       '`','1','2','3','4','5','6','7','8','9','0','-','=','del',
       'tab','q','w','e','r','t','y','u','i','o','p','[',']','\\',
-      'caps lock','a','s','d','f','g','h','j','k','l',';',"'",'ent',
-      'shif','z','x','c','v','b','n','m',',','.','/','^','shif-r',
-      'fn','ctrl','opt','cmd','space','cmd','opt','<','v','>'];
+      'caps lock','a','s','d','f','g','h','j','k','l',';',"'",'enter',
+      'shift','z','x','c','v','b','n','m',',','.','/','shift-r',
+      'fn','ctrl','opt','cmd','space','cmd','opt',];
 
     keyLayout.forEach((key) => {
       const keyElement = document.createElement('button');
-      const insertLineBreak = ['del', '\\', 'ent', 'shif-r'].includes(key);
+      const insertLineBreak = ['del', '\\', 'enter', 'shift-r'].includes(key);
 
       //Add classes/attributes
       keyElement.setAttribute('type', 'button');
@@ -102,7 +102,7 @@ const Keyboard = {
           });
           break;
 
-        case 'ent':
+        case 'enter':
           keyElement.classList.add('keyboard__key--wide');
           keyElement.textContent = 'enter';
           keyElement.dataset.value = 'Enter';
@@ -123,17 +123,16 @@ const Keyboard = {
           });
           break;
 
-        case 'shif':
+        case 'shift':
           keyElement.classList.add('keyboard__key--medium');
           keyElement.textContent = 'shift';
           keyElement.dataset.value = 'shift';
-
           break;
 
-        case 'shif-r':
+        case 'shift-r':
           keyElement.classList.add('keyboard__key--medium');
           keyElement.textContent = 'shift';
-
+          keyElement.dataset.value = 'shift-r';
           break;
 
         case '^':
@@ -214,11 +213,14 @@ const Keyboard = {
 
   showPressedKeys() {
     document.addEventListener('keydown', (e) => {
+      //prettier-ignore
+      const specialSymbols = ['Shift','Control','Alt','Meta','Tab','Enter','Space','Backspace',];
       console.log(e.key);
       if (
-        document.querySelector(
-          `.keyboard__key[data-value='${e.key.toLowerCase()}']`
-        )
+        // document.querySelector(
+        //   `.keyboard__key[data-value='${e.key.toLowerCase()}']`
+        // )
+        !specialSymbols.includes(e.key)
       ) {
         Keyboard.properties.value += e.key;
         Keyboard.elements.textArea.value = Keyboard.properties.value;
