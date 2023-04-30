@@ -12,14 +12,14 @@ html {
 }
 
 body {
-  background-color: #fffaf5;
+  background-color: #ffe8cc;
 }
 
 .keyboard {
   margin: 10rem auto;
   background-color: #ffe8cc;
   background-color: #ffd8a8;
-  width: 100%;
+  max-width: 110rem;
   padding: 2rem 0;
 
   display: flex;
