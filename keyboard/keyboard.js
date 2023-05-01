@@ -1,54 +1,53 @@
-'use strict';
+class VirtualKeyboard {
+  constructor() {
+    this.elements = {
+      main: null,
+      textArea: null,
+      keysContainer: null,
+      keys: [],
+    };
 
-const Keyboard = {
-  elements: {
-    main: null,
-    textArea: null,
-    keysContainer: null,
-    keys: [],
-  },
+    this.eventHandlers = {
+      oninput: null,
+      onclose: null,
+    };
 
-  eventHandlers: {
-    oninput: null,
-    onclose: null,
-  },
-
-  properties: {
-    value: '',
-    capsLock: false,
-    event: null,
-    language: null,
-    case: 'low',
-    //prettier-ignore
-    keyLayoutEn :[
+    this.properties = {
+      value: '',
+      capsLock: false,
+      event: null,
+      language: null,
+      case: 'low',
+      //prettier-ignore
+      keyLayoutEn :[
       '`','1','2','3','4','5','6','7','8','9','0','-','=','del',
       'tab','q','w','e','r','t','y','u','i','o','p','[',']','\\',
       'caps lock','a','s','d','f','g','h','j','k','l',';',"'",'enter',
       'shift-1','z','x','c','v','b','n','m',',','.','/','shift-2',
       'ctrl','opt-1','cmd-1','space','cmd-2','opt-2',],
-    //prettier-ignore
-    keyLayoutEnShift :[
+      //prettier-ignore
+      keyLayoutEnShift :[
       '~','!','@','#','$','%','^','&','*','(',')','_','+','del',
       'tab','Q','W','E','R','T','Y','U','I','O','P','{','}','\\',
       'caps lock','A','S','D','F','G','H','J','K','L',':','"','enter',
       'shift-1','Z','X','C','V','B','N','M','<','>','?','shift-2',
       'ctrl','opt-1','cmd-1','space','cmd-2','opt-2',],
-    //prettier-ignore
-    keyLayoutRu: [
+      //prettier-ignore
+      keyLayoutRu: [
         ']','1','2','3','4','5','6','7','8','9','0','-','=','del',
         'tab','й','ц','у','к','е','н','г','ш','щ','з','х','ъ','ё',
         'caps lock','ф','ы','в','а','п','р','о','л','д','ж','э','enter',
         'shift-1','я','ч','с','м','и','т','ь','б','ю','/','shift-2',
         'ctrl','opt-1','cmd-1','space','cmd-2','opt-2',],
-    //prettier-ignore
-    keyLayoutRuShift: [
+      //prettier-ignore
+      keyLayoutRuShift: [
         '[','!','"','№','%',':',',','.',';','(',')','_','+','del',
         'tab','Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х','Ъ','Ё',
         'caps lock','Ф','Ы','В','А','П','Р','О','Л','Д','Ж','Э','enter',
         'shift-1','Я','Ч','С','М','И','Т','Ь','Б','Ю','?','shift-2',
         'ctrl','opt-1','cmd-1','space','cmd-2','opt-2',],
-  },
-
+    };
+  }
   init() {
     //Create main elements
     this.elements.main = document.createElement('div');
@@ -89,7 +88,7 @@ const Keyboard = {
 
     this.showPressedKeys();
     this.checkBothKeysPressed();
-  },
+  }
 
   _createKeys(language) {
     const fragment = document.createDocumentFragment();
@@ -103,6 +102,11 @@ const Keyboard = {
 
       //change default, because when button in focus, space activate second time
       keyElement.addEventListener('keydown', (e) => {
+        if (e.key === ' ') e.preventDefault();
+        if (e.key === 'Tab') e.preventDefault();
+        if (e.key === 'Enter') e.preventDefault();
+      });
+      keyElement.addEventListener('keyup', (e) => {
         if (e.key === ' ') e.preventDefault();
         if (e.key === 'Tab') e.preventDefault();
         if (e.key === 'Enter') e.preventDefault();
@@ -162,17 +166,6 @@ const Keyboard = {
 
           keyElement.addEventListener('click', function () {
             Keyboard.properties.value += '\n';
-
-            // Keyboard.elements.textArea.value.substring(
-            //   0,
-            //   Keyboard.elements.textArea.selectionStart
-            // ) +
-            //   '\n' +
-            //   Keyboard.elements.textArea.value.substring(
-            //     Keyboard.elements.textArea.selectionEnd,
-            //     Keyboard.elements.textArea.value.length
-            //   );
-            // Keyboard._triggerEvent('oninput');
           });
           break;
 
@@ -262,11 +255,11 @@ const Keyboard = {
     });
 
     return fragment;
-  },
+  }
 
   _triggerEvent() {
     this.eventHandlers.oninput(this.properties.value);
-  },
+  }
 
   _toggleCapsLock() {
     this.properties.capsLock = !this.properties.capsLock;
@@ -278,11 +271,11 @@ const Keyboard = {
           ? key.textContent.toUpperCase()
           : key.textContent.toLowerCase();
     });
-  },
+  }
   open(initialValue, oninput) {
     this.properties.value = initialValue || '';
     this.eventHandlers.oninput = oninput;
-  },
+  }
 
   deleteChar() {
     Keyboard.properties.value = Keyboard.properties.value.substring(
@@ -293,7 +286,7 @@ const Keyboard = {
     if (Keyboard.elements.textArea !== document.activeElement) {
       Keyboard.elements.textArea.value = Keyboard.properties.value;
     }
-  },
+  }
 
   _toggleActive(action) {
     document
@@ -301,7 +294,7 @@ const Keyboard = {
         `.keyboard__key[data-value='${Keyboard.properties.event.key?.toLowerCase()}']`
       )
       ?.classList[action === 'add' ? 'add' : 'remove']('keyboard__key--active');
-  },
+  }
 
   _toggleActiveWithLocation(action) {
     document
@@ -311,10 +304,10 @@ const Keyboard = {
         }']`
       )
       ?.classList[action === 'add' ? 'add' : 'remove']('keyboard__key--active');
-  },
+  }
 
-  pressedKeys: [],
   showPressedKeys() {
+    let pressedKeys = [];
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Meta' && e.key === 'Alt') {
         console.log('both pressed');
@@ -324,7 +317,7 @@ const Keyboard = {
       const specialSymbols = ['Shift','Control','Alt','Meta','Tab','Enter','Space','Backspace','CapsLock','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','F1','F2','F3','F4','F5','F7','F8','F9','F10','F11','F12'];
 
       //add all pressed keys to array to check which one is pressed
-      Keyboard.pressedKeys.push(e.key);
+      pressedKeys.push(e.key);
 
       if (!specialSymbols.includes(e.key)) {
         Keyboard.properties.value += e.key;
@@ -398,7 +391,7 @@ const Keyboard = {
             .classList.add('keyboard__key--active');
         }
       });
-      Keyboard.pressedKeys.splice(0, Keyboard.pressedKeys.length);
+      pressedKeys.splice(0, pressedKeys.length);
       switch (e.key) {
         case 'CapsLock':
           Keyboard?._toggleActive('remove');
@@ -448,7 +441,7 @@ const Keyboard = {
           break;
       }
     });
-  },
+  }
 
   checkBothKeysPressed() {
     let optionKeyPressed = false;
@@ -485,15 +478,17 @@ const Keyboard = {
         commandKeyPressed = false;
       }
     });
-  },
+  }
 
   _updateLayout(layout) {
     Keyboard.elements.keysContainer.innerHTML = '';
     this.elements.keysContainer.appendChild(
       this._createKeys(Keyboard.properties[layout])
     );
-  },
-};
+  }
+}
+
+const Keyboard = new VirtualKeyboard();
 
 window.addEventListener('DOMContentLoaded', function () {
   Keyboard.properties.language = localStorage.getItem('lang');
