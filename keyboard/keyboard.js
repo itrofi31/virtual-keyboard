@@ -107,6 +107,20 @@ const Keyboard = {
         if (e.key === 'Tab') e.preventDefault();
         if (e.key === 'Enter') e.preventDefault();
       });
+      const toggleShift = function () {
+        keyElement.addEventListener('mousedown', () => {
+          Keyboard.properties.language === 'keyLayoutEn'
+            ? Keyboard._updateLayout('keyLayoutEnShift')
+            : Keyboard._updateLayout('keyLayoutRuShift');
+          Keyboard._toggleCapsLock();
+        });
+        keyElement.addEventListener('mouseup', () => {
+          Keyboard.properties.language === 'keyLayoutEn'
+            ? Keyboard._updateLayout('keyLayoutEn')
+            : Keyboard._updateLayout('keyLayoutRu');
+          Keyboard._toggleCapsLock();
+        });
+      };
 
       switch (key) {
         case 'del':
@@ -166,12 +180,14 @@ const Keyboard = {
           keyElement.classList.add('keyboard__key--wide');
           keyElement.textContent = 'shift';
           keyElement.dataset.value = 'shift-1';
+          toggleShift();
           break;
 
         case 'shift-2':
           keyElement.classList.add('keyboard__key--wide');
           keyElement.textContent = 'shift';
           keyElement.dataset.value = 'shift-2';
+          toggleShift();
           break;
 
         case 'space':
@@ -338,11 +354,11 @@ const Keyboard = {
           break;
 
         case 'Shift':
-          Keyboard._toggleActiveWithLocation('add');
           Keyboard.properties.language === 'keyLayoutEn'
             ? Keyboard._updateLayout('keyLayoutEnShift')
             : Keyboard._updateLayout('keyLayoutRuShift');
           Keyboard._toggleCapsLock();
+          Keyboard._toggleActiveWithLocation('add');
           break;
 
         case 'Meta':
@@ -402,11 +418,11 @@ const Keyboard = {
           break;
 
         case 'Shift':
-          Keyboard._toggleActiveWithLocation('remove');
           Keyboard.properties.language === 'keyLayoutEn'
             ? Keyboard._updateLayout('keyLayoutEn')
             : Keyboard._updateLayout('keyLayoutRu');
           Keyboard._toggleCapsLock();
+          Keyboard._toggleActiveWithLocation('remove');
           break;
 
         case 'Meta':
