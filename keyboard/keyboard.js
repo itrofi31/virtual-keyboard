@@ -17,7 +17,7 @@ const Keyboard = {
     value: '',
     capsLock: false,
     event: null,
-    language: 'keyLayoutEn',
+    language: null,
     case: 'low',
     //prettier-ignore
     keyLayoutEn :[
@@ -62,7 +62,7 @@ const Keyboard = {
 
     // append fragment
     this.elements.keysContainer.appendChild(
-      this._createKeys(this.properties.keyLayoutEn)
+      this._createKeys(this.properties[this.properties.language])
     );
 
     //fill keys array
@@ -85,7 +85,7 @@ const Keyboard = {
     this.open(this.elements.textArea.value, (currentValue) => {
       this.elements.textArea.value = currentValue;
     });
-    // });
+    // set language
 
     this.showPressedKeys();
     this.checkBothKeysPressed();
@@ -467,9 +467,11 @@ const Keyboard = {
         if (Keyboard.properties.language === 'keyLayoutEn') {
           Keyboard.properties.language = 'keyLayoutRu';
           Keyboard._updateLayout('keyLayoutRu');
+          localStorage.setItem('lang', Keyboard.properties.language);
         } else {
           Keyboard.properties.language = 'keyLayoutEn';
           Keyboard._updateLayout('keyLayoutEn');
+          localStorage.setItem('lang', Keyboard.properties.language);
         }
         console.log(Keyboard.properties.language);
       }
@@ -494,5 +496,10 @@ const Keyboard = {
 };
 
 window.addEventListener('DOMContentLoaded', function () {
+  Keyboard.properties.language = localStorage.getItem('lang');
+  Keyboard.properties.language =
+    Keyboard.properties.language === null
+      ? 'keyLayoutEn'
+      : Keyboard.properties.language;
   Keyboard.init();
 });
